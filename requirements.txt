@@ -1,0 +1,3 @@
+certifi
+pytube
+youtube_dl
