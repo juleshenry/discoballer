@@ -1,6 +1,7 @@
 import subprocess
 import threading
 import queue
+import sys
 MAX_CONCURRENT_CALLS = 8
 
 def system_call(command):
@@ -31,11 +32,6 @@ def make_system_calls(commands):
     for thread in threads:
         thread.join()
 
-def get_urls_from_txt(file):
-    with open(file) as s:
-        urls = s.readlines()
-    return urls
-
 def get_urls_from_playlist_url(playlist_url):
     from pytube import Playlist
     """
@@ -45,12 +41,16 @@ def get_urls_from_playlist_url(playlist_url):
     playlist = Playlist(playlist_url)
     return playlist.video_urls
 
+def get_urls_from_txt(txt_path):
+    with open(txt_path, 'r') as f:
+        return f.readlines()
+    
 if __name__=='__main__':
     # Example usage
     commands = []
-    # get_urls_from_txt('urls.txt')
-    playlist_url = ''
+    playlist_url = sys.argv[1]
     urls = get_urls_from_playlist_url(playlist_url)
+    # urls = get_urls_from_txt('urls.txt')
     print(f'got { len(urls)} urls',)
     commands = [f"yt-dlp -x --ignore-errors --audio-format 'mp3' {x}" for x in urls]
     make_system_calls(commands)
